@@ -3,6 +3,7 @@ import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import Head from './components/Head.jsx'
 import BoardList from './components/board/BoardList.jsx'
+
 function App() {
   const [cookies] = useCookies(['id'])
   return (
