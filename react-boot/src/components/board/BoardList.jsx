@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {useState, useEffect} from "react"
 import {useParams, useLocation} from "react-router-dom"
 import dayjs from 'dayjs'  //npm install dayjs. 날짜 형식 처리 기능
@@ -22,19 +23,20 @@ const BoardList = ()=> {
   const location = useLocation();  //http://localhost:5173/board/BoardList/1
   let queryString = location.search; //http://localhost:5173/board/BoardList/1?page=1
                                       // location.search : page=1
-  useEffect(()=>{   getBoardList();  },[])  //화면이 처음 렌더링되면 getBoardList함수 실행, 한번만 실행됨 
+  useEffect(()=>{   getBoardList();  },[boardid])  //화면이 처음 렌더링되면 getBoardList함수 실행, 한번만 실행됨 
                                             // [data] : data값이 변경될떄 마다 실행
-                                            // 배열값이 없는 경우 : 렌더링시마다 실
+                                            // 배열값이 없는 경우 : 렌더링시마다 실행
 
-  const getBoardList = () => {   //화면 레더링시 호출되는 함수
+  const getBoardList = () => {   //화면 렌더링시 호출되는 함수
     if (queryString.length === 0) {
         queryString = "?boardid=" + boardid;
     }
     fetch("http://localhost:8080/board/boardList" + queryString)   //ajax으로 백엔드 서버와 통신. springboot 서버에서 데이터 수신
       .then((resp)=> resp.json())
       .then((json) => {
-        setBList(json.blist);  
-        setBoardCount(json.listcount);
+        console.log(json)
+        setBList(json.blist);  //bList 변수 변경
+        setBoardCount(json.listcount); //boardCount 변수 변경
         setStart(json.start)
         setEnd(json.end)
         setPageInt(json.pageInt)
@@ -53,11 +55,11 @@ const BoardList = ()=> {
   }
 
   return (
-    <div>
+    <div className="container-fluid">
       <div>
         <h2>{boardName}[{boardCount}]</h2>
-        <p><a href={`/board/boardForm/${boardid}`}>게시판등록</a></p>
-        <table>
+        <p className="text-right"><Link to={`/board/boardForm/${boardid}`}>게시판등록</Link></p>
+        <table className="table ">
           <thead>
             <tr><th>번호</th><th>작성자</th><th>제목</th><th>날짜</th><th>조회수</th><th>파일</th></tr>
           </thead>
@@ -73,8 +75,8 @@ const BoardList = ()=> {
                   <td>{dayjs(b.regdate).format("YYYY-MM-DD")}</td>
                   <td>{b.readcnt}</td>
                   <td><img  src={"http://localhost:8080/img/board/" + b.file1} width="30px"  alt="file" />{b.file1}</td>
-                </tr>
-              ))) : (
+                </tr> 
+              ))) : (  //bList의 데이터가 없는 경우 
               <tr>
                 <td colSpan="6" className="text-center">
                   게시물이 없습니다.
@@ -83,18 +85,19 @@ const BoardList = ()=> {
             )}
           </tbody>
         </table>
-        <ul>
-          <li>
-            <Link to={`/board/boardList?page=${start - bottomLine}`}>Previous</Link>
-          </li>
+        </div>
+        <div className="container-fluid">
+           <div className="collapse navbar-collapse">
+           <ul className="navbar-nav">
+          <li className="navbar-item"><Link to={`/board/boardList?page=${start - bottomLine}`} className="nav-link">Previous</Link></li>
           {getPage(start, end).map((p) => (
-            <li key={p}><Link  to={`/board/boardList?page=${p}`}>{p}</Link></li>
+            <li key={p} className="navbar-item"><Link  to={`/board/boardList?page=${p}`} className="nav-link">{p}</Link></li>
           ))}
-          <li>
-            <Link to={`/board/boardList?pageNum=${start + bottomLine}`}>Next </Link>
+          <li className="navbar-item">
+            <Link to={`/board/boardList?pageNum=${start + bottomLine}`} className="nav-link">Next </Link>
           </li>
         </ul>
-      </div></div>
+      </div></div></div>
   );
 }
 export default BoardList;
