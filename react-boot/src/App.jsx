@@ -6,11 +6,16 @@ import BoardList from './components/board/BoardList.jsx'
 import BoardForm from './components/board/BoardForm.jsx'
 import BoardInfo from './components/board/BoardInfo.jsx'
 import BoardUpdateForm from './components/board/BoardUpdateForm.jsx'
+import BoardDeleteForm from './components/board/BoardDeleteForm.jsx'
 /**
  * 2026-05-13 과제
  *  1. 게시판 목록 페이징처리부분 수정. 페이지부분 추가. 2페이지이상 조회
  *  2. 상세페이지에서 게시판 이름 출력
  *  3. 이력서, 자기소개서, 포트폴리오 준비하기
+ *
+ * 2026-05-14 과제
+ *  1.  게시판 댓글(등록,삭제) 하기
+
  */
 function App() {
   const [cookies] = useCookies(['id']) //id이름의 쿠키정보
@@ -23,6 +28,7 @@ function App() {
         <Route path="/board/boardForm/:boardid" element={<BoardForm />} />
         <Route path="/board/boardInfo/:bnum" element={<BoardInfo />} />
         <Route path="/board/boardUpdateForm/:bnum" element={<BoardUpdateForm />} />
+        <Route path="/board/boardDeleteForm/:bnum" element={<BoardDeleteForm />} />
       </Routes>
     </BrowserRouter>
   )

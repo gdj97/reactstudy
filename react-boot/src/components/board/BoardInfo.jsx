@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams, Link } from 'react-router-dom';
+import dayjs from 'dayjs'
 function BoardInfo() {
     const [board,setBoard] = useState({})
     const [boardName,setBoardName] = useState("")
+    const [cList, setCList] = useState([]);           //댓글 목록
+    const [writer, setWriter] = useState("");
+    const [pass, setPass] = useState("");
+    const [content, setContent] = useState("");
+
     const location = useLocation();
     let queryString = location.search;
     const { bnum } = useParams();
@@ -16,10 +22,34 @@ function BoardInfo() {
         .then((json) => {
             setBoard(json.board);
             setBoardName(json.boardName);
+            setCList(json.clist);  //댓글 목록
         })
     }
     useEffect(()=> {   getBoardInfo()  },[]);
 
+const commentSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    try {
+      const form = new FormData();
+      form.append('num', bnum);
+      form.append('pass', pass);
+      form.append('content', content);
+      fetch('http://localhost:8080/board/CompontPro', {
+        method: 'POST',
+        body: form
+      })
+      .then((resp)=>resp.json())
+      .then((json)=> {
+        //alert(json.msg)  //결과 메세지. => 화면에 빨간글씨로 변경하기
+        document.querySelector("#msg").innerHTML = json.msg;
+        if(json.code === 0) {  //서버에서 code=0 인경우가 수정 완료상태. 
+           navigate("/board/boardInfo/" +bnum); //게시물 상세 정보로 리다렉트
+        }
+      });
+    } catch (e) {
+      console.error("업데이트 실패:", e);
+    }
+  }, [gname, pass, subject, content, boardid,navigate]); 
   return (
     <div>
       <div className="container">
@@ -40,6 +70,7 @@ function BoardInfo() {
                 </td>
               </tr>
               <tr><td>제목</td><td>{board.subject}</td></tr>
+              <tr><td>작성자</td><td>{board.name}</td></tr>
               <tr><td>내용</td><td>{board.content}</td></tr>
               <tr><td>날짜</td><td>{board.regdate}</td></tr>
               <tr><td>조회수</td><td>{board.readcnt}</td></tr>
@@ -53,6 +84,8 @@ function BoardInfo() {
           </div>
         </div>
       </div>
+
     </div>
-  );   }
+  );   
+}
 export default BoardInfo;
