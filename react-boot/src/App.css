@@ -140,7 +140,6 @@
     margin-top: 20px;
     flex-wrap: wrap;
     justify-content: center;
-/*
     li {
       flex: 1 1 calc(50% - 8px);
     }
@@ -150,7 +149,6 @@
       justify-content: center;
       box-sizing: border-box;
     }
-*/
   }
 }
 

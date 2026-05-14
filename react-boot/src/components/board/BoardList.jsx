@@ -23,30 +23,32 @@ const BoardList = ()=> {
   const location = useLocation();  //http://localhost:5173/board/BoardList/1
   let queryString = location.search; //http://localhost:5173/board/BoardList/1?page=1
                                       // location.search : page=1
-  useEffect(()=>{   getBoardList();  },[boardid])  //화면이 처음 렌더링되면 getBoardList함수 실행, 한번만 실행됨 
-                                            // [data] : data값이 변경될떄 마다 실행
+  useEffect(()=>{   getBoardList();  },[boardid,queryString])  //화면이 처음 렌더링되면 getBoardList함수 실행, 한번만 실행됨 
+                                            // [data] : data값이 변경될때 마다 실행
                                             // 배열값이 없는 경우 : 렌더링시마다 실행
 
   const getBoardList = () => {   //화면 렌더링시 호출되는 함수
     if (queryString.length === 0) {
         queryString = "?boardid=" + boardid;
+    } else {
+        queryString += "&boardid=" + boardid;
     }
     fetch("http://localhost:8080/board/boardList" + queryString)   //ajax으로 백엔드 서버와 통신. springboot 서버에서 데이터 수신
       .then((resp)=> resp.json())
       .then((json) => {
-        console.log(json)
         setBList(json.blist);  //bList 변수 변경
         setBoardCount(json.listcount); //boardCount 변수 변경
         setStart(json.start)
         setEnd(json.end)
         setPageInt(json.pageInt)
         setBottomLine(json.bottomLine)
-        setMaxPage(json.maxPage)
+        setMaxPage(json.maxpage)
         setBoardName(json.boardName)
       })
   }
 
   function getPage(start, end) {
+    
     let arr = [];
     for (let i = start; i <= end; i++) {
       arr.push(i);
@@ -54,8 +56,8 @@ const BoardList = ()=> {
     return arr;
   }
 
-  return (
-    <div className="container-fluid">
+  return (   
+    <div className="container-fluid"> {/** JSX 영역  */}
       <div>
         <h2>{boardName}[{boardCount}]</h2>
         <p className="text-right"><Link to={`/board/boardForm/${boardid}`}>게시판등록</Link></p>
@@ -86,18 +88,21 @@ const BoardList = ()=> {
           </tbody>
         </table>
         </div>
-        <div className="container-fluid">
-           <div className="collapse navbar-collapse">
-           <ul className="navbar-nav">
-          <li className="navbar-item"><Link to={`/board/boardList?page=${start - bottomLine}`} className="nav-link">Previous</Link></li>
+        {/** 페이징 부분 */}
+        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid justify-content-center">
+
+           <ul className="pagination justify-content-center">
+          <li className={pageInt == 1 ? "page-item disabled" : "page-item"}>
+            <Link to={`/board/boardList/${boardid}?page=${pageInt - 1}`} className="page-link">Previous</Link></li>
           {getPage(start, end).map((p) => (
-            <li key={p} className="navbar-item"><Link  to={`/board/boardList?page=${p}`} className="nav-link">{p}</Link></li>
+            <li key={p} className={pageInt == p ? "page-item active" : "page-item"}>
+             <Link  to={`/board/boardList/${boardid}?page=${p}`} className="page-link">{p}</Link></li>
           ))}
-          <li className="navbar-item">
-            <Link to={`/board/boardList?pageNum=${start + bottomLine}`} className="nav-link">Next </Link>
+          <li className={pageInt == maxPage ? "page-item disabled" : "page-item"}>
+            <Link to={`/board/boardList/${boardid}?page=${pageInt + 1}`} className="page-link">Next</Link>
           </li>
-        </ul>
-      </div></div></div>
+        </ul></div></nav></div>
   );
 }
 export default BoardList;

@@ -14,7 +14,6 @@ function BoardInfo() {
         fetch("http://localhost:8080/board/boardInfo" + queryString)
         .then((resp)=> resp.json())
         .then((json) => {
-            console.log(json)
             setBoard(json.board);
             setBoardName(json.boardName);
         })
