@@ -1,20 +1,26 @@
+// 게시물 상세조회 + 댓글 정보 : 컴포넌트로 처리하기
+
 import { useState, useEffect,useCallback } from "react";
 import { useLocation, useParams, Link } from 'react-router-dom';
 import dayjs from 'dayjs'
+
+import Comment from "./Comment.jsx"
+
 function BoardInfo() {
     const [board,setBoard] = useState({})
     const [boardName,setBoardName] = useState("")
     const [cList, setCList] = useState([]);           //댓글 목록
-    const [writer, setWriter] = useState("");
 
     const location = useLocation();
     let queryString = location.search;
     const { bnum } = useParams();
 
+    if (queryString.length === 0) {
+        queryString  = "?num=" + bnum;
+    } else {
+        queryString  += "&num=" + bnum;
+    }
     const getBoardInfo = () => {
-        if (queryString.length === 0) {
-            queryString  = "?num=" + bnum;
-        }
         fetch("http://localhost:8080/board/boardInfo" + queryString)
         .then((resp)=> resp.json())
         .then((json) => {
@@ -23,8 +29,7 @@ function BoardInfo() {
             setCList(json.clist);  //댓글 목록
         })
     }
-    useEffect(()=> {   getBoardInfo()  },[]);
-
+    useEffect(()=> {   getBoardInfo()  },[queryString]);
   return (
     <div>
       <div className="container">
@@ -59,8 +64,11 @@ function BoardInfo() {
           </div>
         </div>
       </div>
-
-
+      {/** Comment 컴포넌트에 2개의 props 전달. Comment(props)로 설정되어야함  */}
+      <Comment 
+        bnum={bnum}
+        cList={cList}
+       />
     </div>
   );   
 }
