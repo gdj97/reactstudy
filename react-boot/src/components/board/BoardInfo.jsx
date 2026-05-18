@@ -1,6 +1,7 @@
 import { useState, useEffect,useCallback } from "react";
 import { useLocation, useParams, Link } from 'react-router-dom';
 import dayjs from 'dayjs'
+//게시물 상세 정보
 function BoardInfo() {
     const [board,setBoard] = useState({})
     const [boardName,setBoardName] = useState("")

@@ -52,9 +52,21 @@ function MemberJoin() {
 	}
     const win_upload = () => {
         const url = "/member/pictureForm";
-        const option= "widt=500,height=400,top=100, left=200";
+        const option= "width=500,height=400,top=100, left=200";
         window.open(url,"",option);
     }
+// 컴포넌트가 마운트될 때 window에 함수 등록
+    useEffect(() => {
+        // 팝업창에서 window.opener.setPicture(...)로 호출할 수 있게 함
+        window.setPicture = (fileName) => {
+            console.log("팝업으로부터 전달받은 파일명:", fileName);
+            setPicture(fileName);
+        };
+        // 컴포넌트가 언마운트(닫힐 때)될 때 메모리 누수 방지를 위해 삭제
+        return () => {
+            delete window.setPicture;
+        };
+    }, []);
 	return (
 	<div className="container">
 		<div className="input-form-backgroud row">
@@ -66,7 +78,7 @@ function MemberJoin() {
 					<div className="row">
 						<div className="col-md-3 mb-3">
 							<label htmlFor="pic">사진</label> {/** for => htmlFor  */}
-							<img src={picture} width="100px" height="120px" onChange={(e) => {setPicture(e.target.value);}}
+							<img src={`http://localhost:8080/member/picture/${picture}`} width="100px" height="120px" onChange={(e) => {setPicture(e.target.value);}}
 							   	value={picture}	 id="pic" />
 							<button className="btn btn-primary btn-block" onClick={win_upload} >사진업로드</button>
 						</div>

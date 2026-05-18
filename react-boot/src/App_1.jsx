@@ -1,5 +1,5 @@
 import './App.css'
-import {BrowserRouter,Routes,Route,Outlet} from 'react-router-dom'
+import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import Head from './components/Head.jsx'
 import BoardList from './components/board/BoardList.jsx'
@@ -25,26 +25,19 @@ import PictureForm from "./components/member/PictureForm.jsx"
 function App() {
   const [cookies] = useCookies(['id']) //id이름의 쿠키정보
   return (
-<BrowserRouter>
-  <Routes>
-    <Route element={
-      <>
-        <Head cook={cookies.id} />
-        <Outlet />
-      </>
-    }>
-      <Route path="/" />
-      <Route path="/board/boardList/:boardid" element={<BoardList />} />
-      <Route path="/board/boardForm/:boardid" element={<BoardForm />} />
-      <Route path="/board/boardInfo/:bnum" element={<BoardInfo />} />
-      <Route path="/board/boardUpdateForm/:bnum" element={<BoardUpdateForm />} />
-      <Route path="/board/boardDeleteForm/:bnum" element={<BoardDeleteForm />} />
-      <Route path="/member/join" element={<MemberJoin />} />
-    </Route>
-
-    {/* 2. Head가 필요 없는 단독 페이지 (PictureForm) */}
-    <Route path="/member/pictureForm" element={<PictureForm />} />
-  </Routes>
-</BrowserRouter>  )
+    <BrowserRouter>
+      <Head cook={cookies.id} />  {/** 쿠키중 id이름의 쿠키값 Head 컨테이너에 전달 */}
+      <Routes>
+        <Route path="/" />
+        <Route path="/board/boardList/:boardid" element={<BoardList />} />
+        <Route path="/board/boardForm/:boardid" element={<BoardForm />} />
+        <Route path="/board/boardInfo/:bnum" element={<BoardInfo />} />
+        <Route path="/board/boardUpdateForm/:bnum" element={<BoardUpdateForm />} />
+        <Route path="/board/boardDeleteForm/:bnum" element={<BoardDeleteForm />} />
+        <Route path="/member/join" element={<MemberJoin />} />
+        <Route path="/member/pictureForm" element={<PictureForm />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 export default App
